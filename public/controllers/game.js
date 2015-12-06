@@ -17,25 +17,31 @@ angular
         vm.generateNewCountry = function() {
             vm.loading = true;
             vm.getRandomCountry().then(function(country) {
-                console.log('The answer is ' + country.name);
                 vm.answer = country.name;
                 Flickr.getPlaceID(country.name).then(function(place_id) {
                     Flickr.getPhotos(place_id).then(function(photos) {
                         vm.photoList = [];
+
+                        // returns a new country if not enough photos are there
+                        if(photos.length < 5) {
+                            vm.generateNewCountry();
+                        }
+
                         photos.forEach(function(photo) {
                             var photoUrl = 'https://farm' + photo.farm + '.staticflickr.com/' + photo.server + '/' + photo.id + '_' + photo.secret + '_n.jpg';
                             vm.photoList.push(photoUrl);
                         });
 
                         vm.loading = false;
+                        console.log('The answer is ' + vm.answer);
                     });
                 });
             });
         }
 
         vm.submitAnswer = function() {
-            if(vm.countryName != "") {
-                if(vm.answer.toLowerCase() == vm.countryName.toLowerCase()) {
+            if(vm.countryName && 0 != vm.countryName.length) {
+                if(vm.answer.toLowerCase().trim() == vm.countryName.toLowerCase().trim()) {
                     vm.points++;
                     vm.countryName = "";
                     vm.generateNewCountry();
