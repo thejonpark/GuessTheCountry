@@ -6,6 +6,8 @@ angular
         vm.answer = {};
         vm.loading = true;
         vm.photoList = [];
+        vm.firstLetter = "";
+        vm.lastLetter = "";
 
         vm.getRandomCountry = function() {
             return Countries.getAllCountries().then(function(countries) {
@@ -18,6 +20,8 @@ angular
             vm.loading = true;
             vm.getRandomCountry().then(function(country) {
                 vm.answer = country.name;
+                vm.firstLetter = country.name.charAt(0);
+                vm.lastLetter = country.name.slice(-1);
                 Flickr.getPlaceID(country.name).then(function(place_id) {
                     Flickr.getPhotos(place_id).then(function(photos) {
                         vm.photoList = [];
